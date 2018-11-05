@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+gevent = "*"
+twisted = "*"
+
+[dev-packages]
+twisted = "*"
+cryptography = "*"
+requests = "*"
+
+[requires]
+python_version = "3.6"
