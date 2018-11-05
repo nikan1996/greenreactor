@@ -8,8 +8,10 @@
 
 @time: 2018/10/28 下午10:28
 """
-
 import gevent
+import gevent.monkey
+
+gevent.monkey.patch_thread()  # patch thread to adjust twisted threadpool
 from gevent import get_hub
 from gevent._interfaces import ILoop
 from gevent._socketcommon import getaddrinfo, wait_read, wait_write
