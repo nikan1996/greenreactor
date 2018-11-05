@@ -18,7 +18,7 @@ URL = 'https://github.com/nikan1996/greenreactor'
 EMAIL = '859905874@qq.com'
 AUTHOR = 'Ni Kan'
 # REQUIRES_PYTHON = '>=2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*'
-VERSION = '0.1.0'
+VERSION = '0.1.3'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -103,7 +103,7 @@ setup(
     url=URL,
     # packages=find_packages(exclude=('tests',)),
     # If your package is a single module, use this instead of 'packages':
-    py_modules=['bench'],
+    py_modules=['greenreactor'],
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,

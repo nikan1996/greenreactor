@@ -8,10 +8,14 @@
 
 @time: 2018/10/28 下午10:28
 """
+from greenlet import GreenletExit
+
 import gevent
 import gevent.monkey
+from twisted.python import failure
 
-gevent.monkey.patch_thread()  # patch thread to adjust twisted threadpool
+gevent.monkey.patch_thread()
+
 from gevent import get_hub
 from gevent._interfaces import ILoop
 from gevent._socketcommon import getaddrinfo, wait_read, wait_write
@@ -44,8 +48,7 @@ class GreenReactor(PosixReactorBase):
     spawn = gevent.spawn
     spawn_later = gevent.spawn_later
     _log = Logger()
-    wait_read = wait_read
-    wait_write = wait_write
+
     """
     Reactor running on top of GeventEventLoop,
     This Reactor should combined with monkey patching
@@ -65,7 +68,7 @@ class GreenReactor(PosixReactorBase):
 
     def __init__(self):
         self.hub = get_hub()
-
+        self.greenlet = None
         self.event_loop = self.hub.loop  # type: ILoop
         self._writers = {}
         self._readers = {}
@@ -75,10 +78,15 @@ class GreenReactor(PosixReactorBase):
         super().__init__()
 
     def mainLoop(self):
-        while True:
-            gevent.sleep(10)
-            if self._justStopped:
-                self._justStopped = False
+        self.greenlet = gevent.getcurrent()
+        try:
+            while True:
+                gevent.sleep(10)
+                if self._justStopped:
+                    self._justStopped = False
+        except (GreenletExit, KeyboardInterrupt):
+            pass
+        self.fireSystemEvent('shutdown')
 
     def _initThreads(self):
         self.installNameResolver(GAIResolver(self, getaddrinfo=getaddrinfo))
@@ -87,10 +95,10 @@ class GreenReactor(PosixReactorBase):
     def _readOrWrite(self, selectable, read):
         if read:
             method = selectable.doRead
-            wait = self.wait_read
+            wait = wait_read
         else:
             method = selectable.doWrite
-            wait = self.wait_write
+            wait = wait_write
 
         fileno = selectable.fileno()
         if selectable.fileno() == -1:
@@ -173,13 +181,8 @@ class GreenReactor(PosixReactorBase):
 
     def stop(self):
         super().stop()
-        self.callLater(0, self.fireSystemEvent, "shutdown")
+        gevent.kill(self.greenlet)
 
-        self.event_loop.destroy()
-
-    def crash(self):
-        super().crash()
-        self.event_loop.destroy()
 
     def callLater(self, seconds, f, *args, **kwargs):
         def run(*a, **k):
