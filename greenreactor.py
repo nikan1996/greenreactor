@@ -1,21 +1,16 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-
 @author:nikan(859905874@qq.com)🎂
 
 @file: geventreactor.py
 
 @time: 2018/10/28 下午10:28
 """
-from greenlet import GreenletExit
-
 import gevent
 import gevent.monkey
-from twisted.python import failure
-
 gevent.monkey.patch_thread()
-
+from greenlet import GreenletExit
 from gevent import get_hub
 from gevent._interfaces import ILoop
 from gevent._socketcommon import getaddrinfo, wait_read, wait_write
@@ -45,26 +40,17 @@ class _DCHandle(object):
 
 @implementer(IReactorFDSet)
 class GreenReactor(PosixReactorBase):
+    """ Reactor running on top of GeventEventLoop,
+        This Reactor should combined with monkey patching.
+
+        Attributes:
+            spawn: alias to gevent spawn
+            spawn_later: alias to gevent spawnlater
+            _log: twisted logger
+    """
     spawn = gevent.spawn
     spawn_later = gevent.spawn_later
     _log = Logger()
-
-    """
-    Reactor running on top of GeventEventLoop,
-    This Reactor should combined with monkey patching
-
-
-    Note:
-        If you use this gevent reactor, you should also monkey patch the program as early as possible.
-
-
-    Usage:
-        .. code:: python
-          import gevent.monkey
-          gevent.monkey.patch_all()
-          from twisted.internet import geventreactor
-          geventreactor.install()
-    """
 
     def __init__(self):
         self.hub = get_hub()
