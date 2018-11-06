@@ -40,8 +40,7 @@ class _DCHandle(object):
 
 @implementer(IReactorFDSet)
 class GreenReactor(PosixReactorBase):
-    """ Reactor running on top of GeventEventLoop,
-        This Reactor should combined with monkey patching.
+    """ Reactor running on top of Gevent Event Loop,
 
         Attributes:
             spawn: alias to gevent spawn
@@ -58,7 +57,6 @@ class GreenReactor(PosixReactorBase):
         self.event_loop = self.hub.loop  # type: ILoop
         self._writers = {}
         self._readers = {}
-
         self._delayedCalls = set()
 
         super().__init__()
@@ -72,6 +70,8 @@ class GreenReactor(PosixReactorBase):
                     self._justStopped = False
         except (GreenletExit, KeyboardInterrupt):
             pass
+
+        gevent.get_hub().join()  # wait the event loop to finish
         self.fireSystemEvent('shutdown')
 
     def _initThreads(self):
@@ -170,6 +170,7 @@ class GreenReactor(PosixReactorBase):
         gevent.kill(self.greenlet)
 
 
+
     def callLater(self, seconds, f, *args, **kwargs):
         def run(*a, **k):
             dc.called = True
@@ -198,10 +199,7 @@ class GreenReactor(PosixReactorBase):
 
 def install():
     """
-    Install an asyncio-based reactor.
-
-    @param eventloop: The asyncio eventloop to wrap. If default, the global one
-        is selected.
+    Install a gevent-based reactor.
     """
     reactor = GreenReactor()
     from twisted.internet.main import installReactor
