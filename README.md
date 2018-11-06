@@ -1,8 +1,14 @@
-# gevent_reactor
+# Greenreactor
 A reactor which make twisted compatible with gevent 
+
+
+## Motivation
+
+Originally I wrote code for [Scrapy](https://github.com/scrapy/scrapy). I want to combine gevent in Scrapy, so I created this greenreactor.
 
 ## Installation
 `pip install greenreactor`
+
 ## Usage
 
 ```python
@@ -18,4 +24,4 @@ from twisted.internet import reactor
 reactor.run()
 ```
 
-Then you can use any gevent api such as `spawn`, `spawn_later`, `1etc.
+Thats all! Now you can use any gevent api such as `spawn`, `spawn_later`, etc.
