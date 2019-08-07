@@ -8,8 +8,7 @@
 @time: 2018/10/28 下午10:28
 """
 import gevent
-import gevent.monkey
-gevent.monkey.patch_thread()
+
 from greenlet import GreenletExit
 from gevent import get_hub
 from gevent._interfaces import ILoop
