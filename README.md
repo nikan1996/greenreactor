@@ -1,5 +1,5 @@
 # Greenreactor
-A reactor which make twisted compatible with gevent 
+A reactor which make twisted compatc with gevent 
 
 
 ## Motivation
@@ -12,7 +12,7 @@ Originally I wrote code for [Scrapy](https://github.com/scrapy/scrapy). I want t
 ## Usage
 
 ```python
-# Usually we need monkey patch
+# Usually we need monkey patch, simply patch all things or patch part of them if you understand what you are doing.
 import gevent.monkey
 gevent.monkey.patch_all()
 
