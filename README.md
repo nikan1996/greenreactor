@@ -15,7 +15,9 @@ Originally I wrote code for [Scrapy](https://github.com/scrapy/scrapy). I want t
 # Usually we need monkey patch, simply patch all things or patch part of them if you understand what you are doing.
 # Guideline: http://www.gevent.org/api/gevent.monkey.html
 import gevent.monkey
+# Disable some patch properly, for example： DISABLE THREAD PATCH ---- gevent.monkey.patch_all(thread=False)
 gevent.monkey.patch_all()
+
 
 # Install greenreactor
 import greenreactor
